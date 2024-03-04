@@ -1,0 +1,10 @@
+library(SNPlocs.Hsapiens.dbSNP144.GRCh37)
+snps<-SNPlocs.Hsapiens.dbSNP144.GRCh37
+for (i in unique(out$chromosome)){
+my_pos<-out$base_pair_location[out$chromosome==i]
+chr_snps<-snpsBySeqname(snps, as.character(i))
+idx<-match(my_pos,pos(chr_snps))
+rsids<-mcols(chr_snps)$RefSNP_id[idx]
+out$rsid[out$chromosome==i]<-rsids
+print(paste(as.character(i),"is ok"))
+}
