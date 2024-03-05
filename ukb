@@ -1,0 +1,14 @@
+out<-fread("F:/blood/XXXXX.gwas.imputed_v3.both_sexes.tsv",header = T)
+head(out)
+out<-subset(out,pval<5e-8)
+ifo <- fread("variants.tsv",header = T)
+head(ifo)
+transform <- ifo[,c(1,2,3,4,5,6)]
+outcomeid <- merge(out,ifo,by.x = "variant",by.y ="variant")
+outcomeid$id=c("kidney/renal cell cancer")
+outcomeid$id2=c("kidney/renal cell cancer || id:20001_1034")
+c=ieugwasr::ld_clump_local(dplyr::tibble(rsid=outcomeid$rsid, pval=outcomeid$pval, id=outcomeid$id),
+                           clump_r2=0.001,clump_kb=10000,clump_p=1,
+                           plink_bin="D:/R-4.3.0/library/plinkbinr/bin/plink_Windows.exe", 
+                           bfile="E:/Rword/OSA/1kg.v3/1kg.v3/EUR")
+outcome<- format_data(c, type = "outcome",snp_col ="rsid",phenotype_col = "id",beta_col = "beta",se_col = "se",eaf_col = "minor_AF.x",effect_allele_col ="alt",other_allele_col = "ref",pval_col = "pval",chr_col = "chr",pos_col = "pos",id_col = "id2")
